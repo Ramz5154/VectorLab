@@ -11,7 +11,8 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 int main() {
 
-    Vec3 a  (4, 3, 5);
+    Vec3 a (1, 2, 3);
+    Vec3 b(4, 5, 6);
    
 
     if (!glfwInit()) return -1;
@@ -24,8 +25,9 @@ int main() {
     }
 
     glfwMakeContextCurrent(window);
-    a.length();
-    a.print();
+    
+    a.dot(b);
+    a.cross(b);
     glfwSetKeyCallback(window, key_callback);
 
     while (!glfwWindowShouldClose(window)) {
