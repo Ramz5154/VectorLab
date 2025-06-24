@@ -1,7 +1,10 @@
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 #include "Vec3.h"
+#include "Scene.h"
+#include "VectorScene.h"
 
+Scene* currentScene;
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)//function to close the window
 {
@@ -25,15 +28,16 @@ int main() {
     }
 
     glfwMakeContextCurrent(window);
-    
+   
     a.dot(b);
     a.cross(b);
     glfwSetKeyCallback(window, key_callback);
+    currentScene = new VectorScene();
 
     while (!glfwWindowShouldClose(window)) {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);//grey background
         glClear(GL_COLOR_BUFFER_BIT);
-
+        currentScene->Render();
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
