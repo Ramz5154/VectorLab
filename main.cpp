@@ -29,8 +29,7 @@ int main() {
 
     glfwMakeContextCurrent(window);
    
-    a.dot(b);
-    a.cross(b);
+   
     glfwSetKeyCallback(window, key_callback);
     currentScene = new VectorScene();
 
