@@ -78,24 +78,25 @@ Mat4 Mat4::rotationZ(float radians)
 	float s = std::sin(radians);
 
 	result.m[0][0] = c;
-	result.m[0][1] = s;
 	result.m[0][1] = -s;
+	result.m[1][0] = s;
 	result.m[1][1] = c;
+
 
 	return result;
 }
 
-Mat4 Mat4::perspective(float fovRadians, float aspect, float near, float far)
-{
+Mat4 Mat4::perspective(float fovRadians, float aspect, float near, float far) {
 	Mat4 result = {};
 
-	float t = tanf(fovRadians / 2.0f); // tangent of half the field of view
+	float t = tanf(fovRadians / 2.0f);
 
 	result.m[0][0] = 1.0f / (aspect * t);
 	result.m[1][1] = 1.0f / t;
-	result.m[2][2] = -(far + near) / (far - near);
+	result.m[2][2] = (near + far) / (near - far);
 	result.m[2][3] = -1.0f;
-	result.m[3][2] = -(2.0f * far * near) / (far - near);
+	result.m[3][2] = (2.0f * near * far) / (near - far);
+	result.m[3][3] = 0.0f;
 
 	return result;
 }
@@ -122,7 +123,7 @@ Mat4 Mat4::lookAt(const Vec3& eye, const Vec3& center, const Vec3& up)
 
 	result.m[3][0] = -s.dot(eye);
 	result.m[3][1] = -u.dot(eye);
-	result.m[3][2] = f.dot(eye); // NOTE: OpenGL uses -f.dot(eye), but this can vary depending on convention
+	result.m[3][2] = -f.dot(eye); 
 
 	return result;
 }

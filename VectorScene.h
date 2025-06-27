@@ -6,7 +6,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
+#include <vector>
 class VectorScene : public Scene
 {
 public:
@@ -18,8 +18,8 @@ public:
 
 	void drawVector(const Vec3 vec, const Vec3& origin);
 
-	void drawSquare(const glm::mat4& transform);
-
+	void drawCube(const glm::mat4& transform);
+	
 	
 };
 

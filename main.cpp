@@ -14,10 +14,10 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 int main() {
 
-    Vec3 a (1, 2, 3);
-    Vec3 b(4, 5, 6);
+    Vec3 a (10, 2, 3);
+    Vec3 b(1, 2, 3);
    
-
+   
     if (!glfwInit()) return -1;
 
     GLFWwindow* window = glfwCreateWindow(800, 600, "VectorLab", nullptr, nullptr);
@@ -28,7 +28,10 @@ int main() {
     }
 
     glfwMakeContextCurrent(window);
-   
+    a.length();
+    Vec3 c = b.normalize();
+    Vec3 d = a.normalize();
+    std::cout << d.dot(c);
    
     glfwSetKeyCallback(window, key_callback);
     currentScene = new VectorScene();

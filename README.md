@@ -1,7 +1,7 @@
 # VectorLab 
 
 ## getting started 
-download glfw3 and glad (i did it through vcpkg)
+download glfw3,glad and glm (i did it through vcpkg)
 
 then go to Configuration Properties > Linker > Input
 
