@@ -7,6 +7,30 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
 
+#include "Ray.h" 
+#include <cmath>
+
+bool intersectRaySphere(const Ray& ray, const glm::vec3& center, float radius, float& outT) {
+    glm::vec3 oc = ray.orgin - center;
+
+    float a = glm::dot(ray.direction, ray.direction);
+    float b = 2.0f * glm::dot(oc, ray.direction);
+    float c = glm::dot(oc, oc) - radius * radius;
+
+    float discriminant = b * b - 4 * a * c;
+
+    if (discriminant < 0.0f)
+        return false;
+
+    float sqrtDisc = sqrt(discriminant);
+    float t0 = (-b - sqrtDisc) / (2.0f * a);
+    float t1 = (-b + sqrtDisc) / (2.0f * a);
+
+    outT = (t0 >= 0.0f) ? t0 : t1;
+    return outT >= 0.0f;
+}
+
+
 VectorScene::VectorScene()
 {
 }
@@ -27,10 +51,18 @@ void VectorScene::HandleEvents()
 
 void VectorScene::Render()
 {
-    float fov = 30.0f * (3.14159f / 180.0f);
-    float aspect = 800.0f / 600.0f;
-    float near = 0.1f;
-    float far = 100.0f;
+    Ray ray(glm::vec3(0, 0, 3), glm::vec3(0, 0, -1)); // camera at (0,0,3) looking at origin
+    glm::vec3 center(0, 0, 0);
+    float radius = 1.0f;
+    float hitT;
+
+    if (intersectRaySphere(ray, center, radius, hitT)) {
+        glm::vec3 hitPoint = ray.at(hitT);
+        std::cout << "Hit at: (" << hitPoint.x << ", " << hitPoint.y << ", " << hitPoint.z << ")\n";
+    }
+    else {
+        std::cout << "No hit\n";
+    }
 
     //Vec3 eye(0, 0, 2);
     Vec3 target(0, 0, 0);

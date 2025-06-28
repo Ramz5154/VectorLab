@@ -21,11 +21,13 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mat4.cpp" />
+    <ClCompile Include="Ray.cpp" />
     <ClCompile Include="Vec3.cpp" />
     <ClCompile Include="VectorScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Mat4.h" />
+    <ClInclude Include="Ray.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Vec3.h" />
     <ClInclude Include="VectorScene.h" />
