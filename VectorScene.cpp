@@ -10,21 +10,25 @@
 #include "Ray.h" 
 #include <cmath>
 
-bool intersectRaySphere(const Ray& ray, const glm::vec3& center, float radius, float& outT) {
-    glm::vec3 oc = ray.orgin - center;
+bool intersectRaySphere(const Ray& ray, const glm::vec3& center, float radius, float& outT) { // Checks if this ray hits the sphere.
+                                                                                             // If it does, returns true and sets outT = distance (t) the ray had to travel to hit.
+
+    glm::vec3 oc = ray.orgin - center; // This computes the vector from the sphere center to the ray origin
 
     float a = glm::dot(ray.direction, ray.direction);
     float b = 2.0f * glm::dot(oc, ray.direction);
-    float c = glm::dot(oc, oc) - radius * radius;
-
+    float c = glm::dot(oc, oc) - radius * radius; // The distance from ray origin to the sphere center, squared — minus the radius squared
+   /* If the ray is far away, c is large.
+      If the ray starts inside the sphere, c can be negative.*/
     float discriminant = b * b - 4 * a * c;
 
-    if (discriminant < 0.0f)
-        return false;
+    if (discriminant < 0.0f)//If discriminant < 0: no real solution = no hit
+     return false;          //If discriminant > 0 : real solution = ray hits sphere
 
     float sqrtDisc = sqrt(discriminant);
     float t0 = (-b - sqrtDisc) / (2.0f * a);
     float t1 = (-b + sqrtDisc) / (2.0f * a);
+    //These are the two possible t values(entry and exit) where the ray intersects the sphere.
 
     outT = (t0 >= 0.0f) ? t0 : t1;
     return outT >= 0.0f;
@@ -41,7 +45,18 @@ VectorScene::~VectorScene()
 
 void VectorScene::Update()
 {
+    Ray ray(glm::vec3(0, 0, 3), glm::vec3(0, 0, -1)); // origin & direction
+    glm::vec3 center(0, 0, 0); // sphere center
+    float radius = 1.0f;
+    float hitT;
 
+    if (intersectRaySphere(ray, center, radius, hitT)) {
+        glm::vec3 hitPoint = ray.at(hitT);
+        std::cout << "Hit at: (" << hitPoint.x << ", " << hitPoint.y << ", " << hitPoint.z << ")\n";
+    }
+    else {
+        std::cout << "No hit\n";
+    }
 }
 
 void VectorScene::HandleEvents()
