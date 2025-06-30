@@ -6,7 +6,7 @@ class Ray //A ray is a straight line that starts at a point and goes forever in 
 {
 public:
 	glm::vec3 direction; // where you are pointing 
-	glm::vec3 orgin; // where it starts
+	glm::vec3 origin; // where it starts
 	Ray();
 	Ray(const glm::vec3& o, const glm::vec3& d);
 

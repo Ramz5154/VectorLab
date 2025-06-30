@@ -20,7 +20,7 @@ Mat4 Mat4::identity()
 	return result;
 }
 
-Mat4 Mat4::translation(const Vec3 t) {
+Mat4 Mat4::translation(const Vec3 t) {// to use translation you need to do mat4 * vec4 take the x,y,z then add 1 for w Vec4(2,3,4,1)
 	Mat4 result = Mat4::identity();
 
 	result.m[3][0] = t.x;

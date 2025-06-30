@@ -1,10 +1,10 @@
 #include "Ray.h"
 
-Ray::Ray() : orgin(0.0f), direction(0.0f, 0.0f, -1.0f)
+Ray::Ray() : origin(0.0f), direction(0.0f, 0.0f, -1.0f)
 {
 }
 
-Ray::Ray(const glm::vec3& o, const glm::vec3& d) : orgin(o), direction(glm::normalize(d))
+Ray::Ray(const glm::vec3& o, const glm::vec3& d) : origin(o), direction(glm::normalize(d))
 {
 }
 
@@ -22,5 +22,5 @@ glm::vec3 Ray::at(float t) const
 
 	//If t < 0, it means the object is behind the ray's origin — no hit.
 	//If t is very large, the object is very far away.
-	return  orgin + t * direction;
+	return  origin + t * direction;
 }

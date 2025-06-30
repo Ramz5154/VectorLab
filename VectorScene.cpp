@@ -13,7 +13,7 @@
 bool intersectRaySphere(const Ray& ray, const glm::vec3& center, float radius, float& outT) { // Checks if this ray hits the sphere.
                                                                                              // If it does, returns true and sets outT = distance (t) the ray had to travel to hit.
 
-    glm::vec3 oc = ray.orgin - center; // This computes the vector from the sphere center to the ray origin
+    glm::vec3 oc = ray.origin - center; // This computes the vector from the sphere center to the ray origin
 
     float a = glm::dot(ray.direction, ray.direction);
     float b = 2.0f * glm::dot(oc, ray.direction);
@@ -45,7 +45,7 @@ VectorScene::~VectorScene()
 
 void VectorScene::Update()
 {
-    Ray ray(glm::vec3(0, 0, 3), glm::vec3(0, 0, -1)); // origin & direction
+    Ray ray(eye, cameraFront); // origin & direction
     glm::vec3 center(0, 0, 0); // sphere center
     float radius = 1.0f;
     float hitT;
@@ -59,14 +59,31 @@ void VectorScene::Update()
     }
 }
 
-void VectorScene::HandleEvents()
+void VectorScene::HandleEvents(GLFWwindow* window)
 {
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        eye += cameraSpeed * cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        eye -= cameraSpeed * cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        eye -= glm::normalize(glm::cross(cameraFront, up)) * cameraSpeed;
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        eye += glm::normalize(glm::cross(cameraFront, up)) * cameraSpeed;
+
+
+
+    cameraFront.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    cameraFront.y = sin(glm::radians(pitch));
+    cameraFront.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    cameraFront = glm::normalize(cameraFront);
+
 
 }
 
 void VectorScene::Render()
 {
-    Ray ray(glm::vec3(0, 0, 3), glm::vec3(0, 0, -1)); // camera at (0,0,3) looking at origin
+    Ray ray(eye, cameraFront); //  dynamically updated camera ray
+
     glm::vec3 center(0, 0, 0);
     float radius = 1.0f;
     float hitT;
@@ -78,14 +95,18 @@ void VectorScene::Render()
     else {
         std::cout << "No hit\n";
     }
+  
 
     //Vec3 eye(0, 0, 2);
-    Vec3 target(0, 0, 0);
-    Vec3 up(0, 1, 0);
-    glm::vec3 eye(0, 0, 2);
+   
+   
+   
+   
+
     float time = glfwGetTime();
     glm::mat4 proj = glm::perspective(glm::radians(90.0f), 800.0f / 600.0f, 0.1f, 100.0f);
-    glm::mat4 view = glm::lookAt(eye, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+    glm::mat4 view = glm::lookAt(eye, eye + cameraFront, up);
+
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::scale(model, glm::vec3(1, 1, 1));
     model = glm::rotate(glm::mat4(1.0f), time, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -96,22 +117,36 @@ void VectorScene::Render()
    
 
     drawCube(mvp);
+  
 
-    //drawVector(Vec3(1, 1, 0),NULL);
-   
+    
+
+    Ray cameraRay(eye, cameraFront); // must come first
+    Vec3 rayStart(cameraRay.origin.x, cameraRay.origin.y, cameraRay.origin.z);
+    Vec3 rayDir(cameraRay.direction.x, cameraRay.direction.y, cameraRay.direction.z);
+    drawVector(rayDir * 5.0f, rayStart, glm::mat4(1.0f));
+
+  
 }
 
 
 
-void VectorScene::drawVector(const Vec3 vec, const Vec3& origin = Vec3(0, 0, 0)) {
-    glBegin(GL_LINE_LOOP);
-    glVertex3f(origin.x, origin.y, origin.z);
-    glVertex3f(origin.x + vec.x, origin.y + vec.y, origin.z + vec.z);
+void VectorScene::drawVector(const Vec3& vec, const Vec3& origin, const glm::mat4& transform) {
+    glm::vec4 p0 = transform * glm::vec4(origin.x, origin.y, origin.z, 1.0f);
+    glm::vec4 p1 = transform * glm::vec4(origin.x + vec.x, origin.y + vec.y, origin.z + vec.z, 1.0f);
+
+    if (fabs(p0.w) > 1e-6f) p0 /= p0.w;
+    if (fabs(p1.w) > 1e-6f) p1 /= p1.w;
+
+    glBegin(GL_LINES);
+    glVertex3f(p0.x, p0.y, p0.z);
+    glVertex3f(p1.x, p1.y, p1.z);
     glEnd();
 }
 
 
 void VectorScene::drawCube(const glm::mat4& transform) {
+    //Define the 8 corners of a cube centered at(0, 0, 0), each side = 1 unit
     std::vector<Vec3> corners = {
         Vec3(-0.5f, -0.5f, -0.5f), // 0
         Vec3( 0.5f, -0.5f, -0.5f), // 1
@@ -122,7 +157,7 @@ void VectorScene::drawCube(const glm::mat4& transform) {
         Vec3( 0.5f,  0.5f,  0.5f), // 6
         Vec3(-0.5f,  0.5f,  0.5f)  // 7
     };
-
+    //12 edges of cube
     std::vector<std::pair<int, int>> edges = {
         {0, 1}, {1, 2}, {2, 3}, {3, 0}, // back face
         {4, 5}, {5, 6}, {6, 7}, {7, 4}, // front face
@@ -130,20 +165,49 @@ void VectorScene::drawCube(const glm::mat4& transform) {
     };
 
     glBegin(GL_LINES);
-    for (const auto& edge : edges) {
-        for (int i = 0; i < 2; ++i) {
-            const Vec3& v = corners[i == 0 ? edge.first : edge.second];
-            glm::vec4 p = transform * glm::vec4(v.x, v.y, v.z, 1.0f);
+    for (const auto& edge : edges) { //goes through all the pairs
+        for (int i = 0; i < 2; ++i) { //if i == 0 use first edge if i == 1 use second edge    // edge 1 = start edge 2 = end , starts at 1 corner ends at another 
+            const Vec3& v = corners[i == 0 ? edge.first : edge.second]; // edges come in pairs first is the first number and second is second 
+            //for example if {7,4} is called it will call the 7th index in the corner vector and the fourth so {7,4} = Vec3(-0.5f,  0.5f,  0.5f), Vec3(-0.5f, -0.5f,  0.5f)
+
+           // Turn the 3D point into a 4D point so the matrix can move (translate), rotate, and scale it properly
+            glm::vec4 p = transform * glm::vec4(v.x, v.y, v.z, 1.0f); 
 
             if (fabs(p.w) > 1e-6f) {
-                p.x /= p.w;
-                p.y /= p.w;
-                p.z /= p.w;
+                p.x /= p.w;// Divide by w to turn the 4D point into a 3D one (perspective divide)
+                p.y /= p.w;// This makes far objects look smaller and close ones look bigger
+                p.z /= p.w;// We skip it if w is almost zero to avoid errors
             }
 
-            glVertex3f(p.x, p.y, p.z);
+            glVertex3f(p.x, p.y, p.z); //makes vector / line
         }
     }
     glEnd();
 }
 
+void VectorScene::HandleMouse(double xpos, double ypos)
+{
+    if (firstMouse) {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    float xoffset = (xpos - lastX) * 0.1f;
+    float yoffset = (lastY - ypos) * 0.1f; // reversed
+
+    lastX = xpos;
+    lastY = ypos;
+
+    yaw += xoffset;
+    pitch += yoffset;
+
+    if (pitch > 89.0f) pitch = 89.0f;
+    if (pitch < -89.0f) pitch = -89.0f;
+
+    glm::vec3 direction;
+    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    direction.y = sin(glm::radians(pitch));
+    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    cameraFront = glm::normalize(direction);
+}

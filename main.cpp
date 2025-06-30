@@ -12,12 +12,16 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
         glfwSetWindowShouldClose(window, GLFW_TRUE);
 }
 
-int main() {
+VectorScene* currentSceneVec = nullptr;
 
-    Vec3 a (10, 2, 3);
-    Vec3 b(1, 2, 3);
-   
-   
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+    if (currentSceneVec)
+        currentSceneVec->HandleMouse(xpos, ypos);
+}
+
+
+int main() {
     if (!glfwInit()) return -1;
 
     GLFWwindow* window = glfwCreateWindow(800, 600, "VectorLab", nullptr, nullptr);
@@ -28,19 +32,23 @@ int main() {
     }
 
     glfwMakeContextCurrent(window);
-    a.length();
-    Vec3 c = b.normalize();
-    Vec3 d = a.normalize();
-    std::cout << d.dot(c);
-   
+
     glfwSetKeyCallback(window, key_callback);
-    currentScene = new VectorScene();
+
+    currentSceneVec = new VectorScene();
+    currentScene = currentSceneVec; // Both point to same instance 
+
+    glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     while (!glfwWindowShouldClose(window)) {
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);//grey background
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        currentScene->HandleEvents(window);
         currentScene->Update();
         currentScene->Render();
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
