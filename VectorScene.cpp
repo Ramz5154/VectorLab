@@ -37,6 +37,7 @@ bool intersectRaySphere(const Ray& ray, const glm::vec3& center, float radius, f
 
 VectorScene::VectorScene()
 {
+    hitPoints.reserve(5);
 }
 
 VectorScene::~VectorScene()
@@ -46,7 +47,7 @@ VectorScene::~VectorScene()
 void VectorScene::Update()
 {
     Ray ray(eye, cameraFront); // origin & direction
-    glm::vec3 center(0, 0, 0); // sphere center
+ 
     float radius = 1.0f;
     float hitT;
 
@@ -62,71 +63,64 @@ void VectorScene::Update()
 void VectorScene::HandleEvents(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        eye += cameraSpeed * cameraFront;
+        eye += cameraSpeed * cameraFront;// move in the direction of the front of the camera 
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        eye -= cameraSpeed * cameraFront;
+        eye -= cameraSpeed * cameraFront;// move in the opposite direction of the front of the camera 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        eye -= glm::normalize(glm::cross(cameraFront, up)) * cameraSpeed;
+        eye -= glm::normalize(glm::cross(cameraFront, up)) * cameraSpeed;// think of the right hand rulle point fingers to first vector (cameraFront) then curl them up pos of (up) 
+    //which makes our thumb point right but we subtarct to get left;
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         eye += glm::normalize(glm::cross(cameraFront, up)) * cameraSpeed;
 
-
-
-    cameraFront.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    cameraFront.y = sin(glm::radians(pitch));
-    cameraFront.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-    cameraFront = glm::normalize(cameraFront);
-
-
+     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
+    {
+        float hitT;
+        if (intersectRaySphere(cameraRay, center, radius, hitT)) {
+            glm::vec3 hitPoint = cameraRay.at(hitT);
+            hitPoints.push_back(hitPoint);
+          
+        }
+    }
 }
 
 void VectorScene::Render()
 {
-    Ray ray(eye, cameraFront); //  dynamically updated camera ray
-
-    glm::vec3 center(0, 0, 0);
-    float radius = 1.0f;
-    float hitT;
-
-    if (intersectRaySphere(ray, center, radius, hitT)) {
-        glm::vec3 hitPoint = ray.at(hitT);
-        std::cout << "Hit at: (" << hitPoint.x << ", " << hitPoint.y << ", " << hitPoint.z << ")\n";
-    }
-    else {
-        std::cout << "No hit\n";
-    }
   
-
-    //Vec3 eye(0, 0, 2);
-   
-   
-   
-   
-
+    cameraRay = Ray(eye, cameraFront);
     float time = glfwGetTime();
     glm::mat4 proj = glm::perspective(glm::radians(90.0f), 800.0f / 600.0f, 0.1f, 100.0f);
     glm::mat4 view = glm::lookAt(eye, eye + cameraFront, up);
 
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::scale(model, glm::vec3(1, 1, 1));
-    model = glm::rotate(glm::mat4(1.0f), time, glm::vec3(0.0f, 1.0f, 0.0f));
+    
+    
+    model = glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * glm::translate(model, glm::vec3(center.x,center.y,center.z));
     glm::mat4 mvp = proj * view * model;
-
-
-    glm::vec3 a(1, 3, 4);
-   
-
-    drawCube(mvp);
-  
 
     
 
-    Ray cameraRay(eye, cameraFront); // must come first
+    drawCube(mvp);
+  
+  
     Vec3 rayStart(cameraRay.origin.x, cameraRay.origin.y, cameraRay.origin.z);
     Vec3 rayDir(cameraRay.direction.x, cameraRay.direction.y, cameraRay.direction.z);
     drawVector(rayDir * 5.0f, rayStart, glm::mat4(1.0f));
-
+    
   
+    for (const auto p : hitPoints) {
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, p);
+        model = glm::scale(model,glm::vec3(0.1f));
+        glm::mat4 mvp = proj * view * model;
+        glColor3f(1.0f, 0.0f, 0);
+        drawSphere(1.0f, 12, 24, mvp);
+        glColor3f(1.0f, 1.0f, 1.0f);
+    }
+
+    if (hitPoints.size() > 4)
+        hitPoints.erase(hitPoints.begin() + 0);
+              
+
 }
 
 
@@ -147,6 +141,7 @@ void VectorScene::drawVector(const Vec3& vec, const Vec3& origin, const glm::mat
 
 void VectorScene::drawCube(const glm::mat4& transform) {
     //Define the 8 corners of a cube centered at(0, 0, 0), each side = 1 unit
+    
     std::vector<Vec3> corners = {
         Vec3(-0.5f, -0.5f, -0.5f), // 0
         Vec3( 0.5f, -0.5f, -0.5f), // 1
@@ -163,7 +158,7 @@ void VectorScene::drawCube(const glm::mat4& transform) {
         {4, 5}, {5, 6}, {6, 7}, {7, 4}, // front face
         {0, 4}, {1, 5}, {2, 6}, {3, 7}  // connecting edges
     };
-
+    
     glBegin(GL_LINES);
     for (const auto& edge : edges) { //goes through all the pairs
         for (int i = 0; i < 2; ++i) { //if i == 0 use first edge if i == 1 use second edge    // edge 1 = start edge 2 = end , starts at 1 corner ends at another 
@@ -185,29 +180,100 @@ void VectorScene::drawCube(const glm::mat4& transform) {
     glEnd();
 }
 
+
+
 void VectorScene::HandleMouse(double xpos, double ypos)
 {
+    float xoffset;
+    float yoffset;
+    extern bool locked;
+   
+    //look right yaw increases 
+    // look up pitch increases 
+
+      // If this is the first time we're getting mouse input,
+// just record the current position to avoid a big jump
     if (firstMouse) {
         lastX = xpos;
         lastY = ypos;
         firstMouse = false;
     }
 
-    float xoffset = (xpos - lastX) * 0.1f;
-    float yoffset = (lastY - ypos) * 0.1f; // reversed
+    // Calculate how much the mouse moved this frame (offset)
+    if (locked) {//free to move // press tab to get your curser
+        // Horizontal movement (left/right)
+        xoffset = (xpos - lastX) * 0.1f;
+        // Vertical movement (up/down), reversed because screen Y goes down as mouse goes up
+        yoffset = (lastY - ypos) * 0.1f;
+    }
+    else {
+        // If camera is locked, don't move
+        xoffset = 0.0f;
+        yoffset = 0.0f;
+    }
 
+    // Save the current mouse position for the next frame
     lastX = xpos;
     lastY = ypos;
 
+    // Update the yaw (left/right) and pitch (up/down) based on mouse movement
     yaw += xoffset;
     pitch += yoffset;
 
+    // Limit how far we can look up or down (to prevent flipping over)
     if (pitch > 89.0f) pitch = 89.0f;
     if (pitch < -89.0f) pitch = -89.0f;
 
+    // Calculate the new direction the camera should face based on yaw and pitch
     glm::vec3 direction;
-    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    direction.y = sin(glm::radians(pitch));
-    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch)); // forward/back
+    direction.y = sin(glm::radians(pitch)); // up/down
+    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch)); // left/right
+
+    // Make sure the direction vector is length 1
     cameraFront = glm::normalize(direction);
+
+    
+
 }
+
+void VectorScene::drawSphere( float radius, int stacks = 12, int slices = 24, const glm::mat4& transform ) {
+
+   
+
+    for (int i = 0; i <= stacks; ++i) {
+        float lat0 = glm::pi<float>() * (-0.5f + float(i - 1) / stacks);
+        float z0 = sin(lat0);
+        float zr0 = cos(lat0);
+
+        float lat1 = glm::pi<float>() * (-0.5f + float(i) / stacks);
+        float z1 = sin(lat1);
+        float zr1 = cos(lat1);
+
+      
+      
+
+        glBegin(GL_LINE_LOOP);
+        for (int j = 0; j <= slices; ++j) {
+            float lng = 2 * glm::pi<float>() * float(j) / slices;
+            float x = cos(lng);
+            float y = sin(lng);
+
+
+            glm::vec4 p1 = transform * glm::vec4(radius * x * zr0, radius * y * zr0, radius * z0, 1.0f);
+            glm::vec4 p2 = transform * glm::vec4(radius * x * zr1, radius * y * zr1, radius * z1, 1.0f);
+
+            
+
+
+            if (fabs(p1.w) > 1e-6f) p1 /= p1.w;
+            if (fabs(p2.w) > 1e-6f) p2 /= p2.w;
+
+            glVertex3f(p1.x, p1.y, p1.z);
+            glVertex3f(p2.x, p2.y, p2.z);
+
+        }
+        glEnd();
+    }
+}
+
