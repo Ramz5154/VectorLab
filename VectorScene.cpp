@@ -97,13 +97,16 @@ void VectorScene::Render()
     model = glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * glm::translate(model, glm::vec3(center.x,center.y,center.z));
     glm::mat4 mvp = proj * view * model;
 
-    
+    glm::vec3 vecto = glm::vec3(1.0f, 0.0f, 0.0f);
+    glm::vec3 her = glm::normalize(vecto);
+   drawVector(her, glm::vec3(0.0f, 0.3f, 0.0f),mvp);
+    drawVector(vecto, glm::vec3(0.0f, 0.0f, 0.0f), mvp);
 
     drawCube(mvp);
   
   
-    Vec3 rayStart(cameraRay.origin.x, cameraRay.origin.y, cameraRay.origin.z);
-    Vec3 rayDir(cameraRay.direction.x, cameraRay.direction.y, cameraRay.direction.z);
+    glm::vec3 rayStart(cameraRay.origin.x, cameraRay.origin.y, cameraRay.origin.z);
+    glm::vec3 rayDir(cameraRay.direction.x, cameraRay.direction.y, cameraRay.direction.z);
     drawVector(rayDir * 5.0f, rayStart, glm::mat4(1.0f));
     
   
@@ -125,7 +128,7 @@ void VectorScene::Render()
 
 
 
-void VectorScene::drawVector(const Vec3& vec, const Vec3& origin, const glm::mat4& transform) {
+void VectorScene::drawVector(const glm::vec3& vec, const glm::vec3& origin, const glm::mat4 transform) {
     glm::vec4 p0 = transform * glm::vec4(origin.x, origin.y, origin.z, 1.0f);
     glm::vec4 p1 = transform * glm::vec4(origin.x + vec.x, origin.y + vec.y, origin.z + vec.z, 1.0f);
 

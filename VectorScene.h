@@ -13,7 +13,7 @@ class VectorScene : public Scene
 {
 public:
 
-	glm::vec3 center = { 10, 0, 0 };
+	glm::vec3 center = { 0, 0, 0 };
 	float radius = 0.4f;
 	
 
@@ -47,7 +47,7 @@ public:
 	void HandleEvents(GLFWwindow* window) override;
 	void Render() override;
 
-	void drawVector(const Vec3& vec, const Vec3& origin, const glm::mat4& transform);
+	void drawVector(const glm::vec3& vec, const glm::vec3& origin, const glm::mat4 transform);
 
 	void drawCube(const glm::mat4& transform);
 	
