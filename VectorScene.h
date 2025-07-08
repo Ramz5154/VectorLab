@@ -47,7 +47,7 @@ public:
 	void HandleEvents(GLFWwindow* window) override;
 	void Render() override;
 
-	void drawVector(const glm::vec3& vec, const glm::vec3& origin, const glm::mat4 transform);
+	void drawVector(const glm::vec3& vec, const glm::vec3 origin, const glm::mat4 transform);
 
 	void drawCube(const glm::mat4& transform);
 	
