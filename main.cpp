@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "VectorScene.h"
 #include "modelScene.h"
+#include "imgui.h"
 int scene = 1;
 Scene* currentScene;
 bool locked = true;

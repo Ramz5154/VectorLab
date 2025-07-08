@@ -30,7 +30,7 @@ void modelScene::Render()
 	mat4 mvp = model * view * proj;
 	vecScene.drawVector(her,glm::vec3(0.0f,0.0f,0.0f), mvp);
 	vecScene.drawVector(vecto, glm::vec3(0.0f, 0.0f, 0.0f), mvp);
-	glColor3f(1.0f, 0.0f, 0.0f);
+	glColor3f(1.0f, 0.3f, 0.0f);
 	vecScene.drawVector(heme, glm::vec3(0.0f, 0.0f, 0.0f), mvp);
 	glColor3f(1.0f, 1.0f, 1.0f);
 }
