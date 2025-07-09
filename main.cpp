@@ -4,7 +4,11 @@
 #include "Scene.h"
 #include "VectorScene.h"
 #include "modelScene.h"
+
 #include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 int scene = 1;
 Scene* currentScene;
 bool locked = true;
@@ -47,14 +51,25 @@ int main() {
     }
 
     glfwMakeContextCurrent(window);
-
     glfwSetKeyCallback(window, key_callback);
+    glfwSetCursorPosCallback(window, mouse_callback);
 
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGui::StyleColorsDark();
+
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 130");
+
+
+  
     currentSceneVec = new VectorScene();
     currentSceneMod = new modelScene();
     currentScene = currentSceneMod; // Both point to same instance 
 
-    glfwSetCursorPosCallback(window, mouse_callback);
+   
  
     while (!glfwWindowShouldClose(window)) {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -70,8 +85,26 @@ int main() {
         currentScene->Update();
         currentScene->Render();
 
-        glfwSwapBuffers(window);
+       
         glfwPollEvents();
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        ImGui::Begin("Scene Switcher");
+        if (ImGui::Button("Model Scene")) {
+            scene = 1;
+        }
+        if (ImGui::Button("Vector Scene")) {
+            scene = 2;
+        }
+        ImGui::Text("Current Scene: %d", scene);
+        ImGui::End();
+
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        glfwSwapBuffers(window);
 
         switch (scene) {
         case 1:
@@ -82,6 +115,11 @@ int main() {
             break;
         }
     }
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+
 
     glfwDestroyWindow(window);
     glfwTerminate();
