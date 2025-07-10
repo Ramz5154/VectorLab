@@ -37,7 +37,7 @@ public:
 
 
 
-	void HandleMouse(double xpos, double ypos);
+	void HandleMouse(double xpos, double ypos) override;
 
 	void drawSphere( float radius, int stacks, int slices, const glm::mat4& transform = glm::mat4(1.0f));
 

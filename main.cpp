@@ -9,7 +9,7 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-int scene = 1;
+int scene = 2;
 Scene* currentScene;
 bool locked = true;
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)//handle events
@@ -35,8 +35,8 @@ VectorScene* currentSceneVec = nullptr;
 modelScene* currentSceneMod = nullptr;
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-    if (currentSceneVec)
-        currentSceneVec->HandleMouse(xpos, ypos);
+    if (currentScene)
+        currentScene->HandleMouse(xpos, ypos);
 }
 
 
@@ -81,6 +81,11 @@ int main() {
      else {
          glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
      }
+
+ ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
         currentScene->HandleEvents(window);
         currentScene->Update();
         currentScene->Render();
@@ -88,16 +93,14 @@ int main() {
        
         glfwPollEvents();
 
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
+       
 
         ImGui::Begin("Scene Switcher");
         if (ImGui::Button("Model Scene")) {
-            scene = 1;
+            scene = 2;
         }
         if (ImGui::Button("Vector Scene")) {
-            scene = 2;
+            scene = 1;
         }
         ImGui::Text("Current Scene: %d", scene);
         ImGui::End();
@@ -108,10 +111,11 @@ int main() {
 
         switch (scene) {
         case 1:
-           currentScene = currentSceneMod;
+           currentScene = currentSceneVec;
+        
             break;
         case 2:
-            currentScene = currentSceneVec;
+            currentScene = currentSceneMod;
             break;
         }
     }
