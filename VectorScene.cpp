@@ -96,7 +96,7 @@ void VectorScene::Render()
     glm::mat4 model = glm::mat4(1.0f);
     
     
-    model = glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * glm::translate(model, glm::vec3(center.x,center.y,center.z));
+    model =  glm::translate(model, glm::vec3(center.x,center.y,center.z)) * glm::rotate(glm::mat4(1.0f), glm::radians(20.0f * time), glm::vec3(0.0f, 1.0f, 0.0f));
     glm::mat4 mvp = proj * view * model;
 
     

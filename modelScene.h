@@ -6,7 +6,14 @@ class modelScene : public Scene
 {
 	VectorScene vecScene;
 public:
-	float vecLength = 1.0f;
+	float vecAX = 1.0f;
+	float vecAY = 1.0f;
+	float vecAZ = 1.0f;
+
+	float vecBX = 1.0f;
+	float vecBY = 1.0f;
+	float vecBZ = 1.0f;
+
 	bool crossVec = false;
 	bool croNor = false;
 	glm::vec3 center = { 0, 0, 0 };

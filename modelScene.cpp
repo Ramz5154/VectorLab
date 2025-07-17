@@ -20,6 +20,15 @@ void modelScene::Update()
 
 void modelScene::HandleEvents(GLFWwindow* window)
 {
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        eye += cameraSpeed * cameraFront;// move in the direction of the front of the camera 
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        eye -= cameraSpeed * cameraFront;// move in the opposite direction of the front of the camera 
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        eye -= glm::normalize(glm::cross(cameraFront, up)) * cameraSpeed;// think of the right hand rulle point fingers to first vector (cameraFront) then curl them up pos of (up) 
+    //which makes our thumb point right but we subtarct to get left;
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        eye += glm::normalize(glm::cross(cameraFront, up)) * cameraSpeed;
 }
 
 void modelScene::Render()
@@ -27,15 +36,23 @@ void modelScene::Render()
    
     glm::mat4 proj = glm::perspective(glm::radians(90.0f), 800.0f / 600.0f, 0.1f, 100.0f);
     glm::mat4 view = glm::lookAt(eye, eye + cameraFront, up);
-	glm::vec3 vecto = vec3(-3.0f, 3.0f, 2.0f);
-	glm::vec3 her = vec3(2,-2,0) * vecLength;
+	glm::vec3 vecto = vec3(-3.0f * vecAX, 3.0f * vecAY, 2.0f * vecAZ);
+	glm::vec3 her = vec3(2 * vecBX,-2 * vecBY,0 * vecBZ);
     glm::vec3 heme = cross(vecto, her);
 	
 	glm::mat4 model = mat4(1.0f);
-	mat4 mvp = model * view * proj;
+  
+	mat4 mvp = proj * view * model;
 
     ImGui::Begin("Vector Controls");
-    ImGui::SliderFloat("Vec A len", &vecLength, 0.0f, 1.0f);
+    ImGui::SliderFloat("Vec A X", &vecAX, 0.0f, 5.0f);
+    ImGui::SliderFloat("Vec A Y", &vecAY, 0.0f, 5.0f);
+    ImGui::SliderFloat("Vec A Z", &vecAZ, 0.0f, 5.0f);
+
+    ImGui::SliderFloat("Vec B X", &vecBX, 0.0f, 5.0f);
+    ImGui::SliderFloat("Vec B Y", &vecBY, 0.0f, 5.0f);
+    ImGui::SliderFloat("Vec B Z", &vecBZ, 0.0f, 5.0f);
+
     if (ImGui::Button("cross")) crossVec = !crossVec;
     if (ImGui::Button("normalize")) croNor = !croNor;
     ImGui::End();

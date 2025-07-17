@@ -13,7 +13,7 @@ class VectorScene : public Scene
 {
 public:
 
-	glm::vec3 center = { 0, 0, 0 };
+	glm::vec3 center = { 2, 2, 2 };
 	float radius = 0.4f;
 	
 
