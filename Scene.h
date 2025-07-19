@@ -7,6 +7,6 @@ public:
 	virtual void Update() = 0;
 	virtual void Render() = 0;
 	virtual void HandleEvents(GLFWwindow* window) = 0;
-	virtual void HandleMouse(double xpos, double ypos) = 0;
+	
 };
 

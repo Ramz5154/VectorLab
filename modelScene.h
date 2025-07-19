@@ -1,9 +1,14 @@
 #pragma once
 #include "scene.h"
 #include "VectorScene.h"
-
+#include "camera.h"
 class modelScene : public Scene
 {
+	camera cam{ glm::vec3(0.0f, 0.0f, 3.0f),  // position
+			  glm::vec3(0.0f, 1.0f, 0.0f),  // up vector
+			  -90.0f,                       // yaw
+			  0.0f };
+
 	VectorScene vecScene;
 public:
 	float vecAX = 1.0f;
@@ -19,10 +24,6 @@ public:
 	glm::vec3 center = { 0, 0, 0 };
 	float radius = 0.4f;
 
-
-	glm::vec3 up = { 0, 1, 0 };
-	glm::vec3 target = { 0, 0, 0 };
-	glm::vec3 eye = { 0, 0, 5 };
 
 
 	Ray cameraRay;    // build ray
@@ -42,6 +43,6 @@ public:
 	void Update() override;
 	void HandleEvents(GLFWwindow* window) override;
 	void Render() override;
-	void HandleMouse(double xpos, double ypos) override;
+	
 };
 

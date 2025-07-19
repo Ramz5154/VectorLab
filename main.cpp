@@ -4,13 +4,15 @@
 #include "Scene.h"
 #include "VectorScene.h"
 #include "modelScene.h"
-
+#include "camera.h"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-int scene = 2;
+int scene = 1;
 Scene* currentScene;
+camera* cam;
+
 bool locked = true;
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)//handle events
 {
@@ -33,10 +35,10 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 VectorScene* currentSceneVec = nullptr;
 modelScene* currentSceneMod = nullptr;
+
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-    if (currentScene)
-        currentScene->HandleMouse(xpos, ypos);
+    cam->HandleMouse(xpos, ypos);
 }
 
 
@@ -64,10 +66,10 @@ int main() {
     ImGui_ImplOpenGL3_Init("#version 130");
 
 
-  
+    cam = new camera(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
     currentSceneVec = new VectorScene();
     currentSceneMod = new modelScene();
-    currentScene = currentSceneMod; // Both point to same instance 
+    currentScene = currentSceneVec; // Both point to same instance 
 
    
  

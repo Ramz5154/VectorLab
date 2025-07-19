@@ -48,7 +48,10 @@ VectorScene::~VectorScene()
 
 void VectorScene::Update()
 {
-    Ray ray(eye, cameraFront); // origin & direction
+
+                       // pitch
+
+    Ray ray(cam.Position, cam.cameraFront); // origin & direction
  
     float radius = 1.0f;
     float hitT;
@@ -64,15 +67,22 @@ void VectorScene::Update()
 
 void VectorScene::HandleEvents(GLFWwindow* window)
 {
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        eye += cameraSpeed * cameraFront;// move in the direction of the front of the camera 
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        eye -= cameraSpeed * cameraFront;// move in the opposite direction of the front of the camera 
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        eye -= glm::normalize(glm::cross(cameraFront, up)) * cameraSpeed;// think of the right hand rulle point fingers to first vector (cameraFront) then curl them up pos of (up) 
+
+    double xpos, ypos;
+    glfwGetCursorPos(window, &xpos, &ypos);
+    cam.HandleMouse(xpos, ypos);
+
+
+    bool forward = glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS;
+
+    bool back = glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS;
+
+    bool left = glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS;
+
     //which makes our thumb point right but we subtarct to get left;
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        eye += glm::normalize(glm::cross(cameraFront, up)) * cameraSpeed;
+    bool right = glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS;
+
+    cam.camInput(forward, back, left, right);
 
      if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
     {
@@ -88,16 +98,16 @@ void VectorScene::HandleEvents(GLFWwindow* window)
 void VectorScene::Render()
 {
   
-    cameraRay = Ray(eye, cameraFront);
+    cameraRay = Ray(cam.Position, cam.cameraFront);
     float time = glfwGetTime();
     glm::mat4 proj = glm::perspective(glm::radians(90.0f), 800.0f / 600.0f, 0.1f, 100.0f);
-    glm::mat4 view = glm::lookAt(eye, eye + cameraFront, up);
+    
 
     glm::mat4 model = glm::mat4(1.0f);
     
     
     model =  glm::translate(model, glm::vec3(center.x,center.y,center.z)) * glm::rotate(glm::mat4(1.0f), glm::radians(20.0f * time), glm::vec3(0.0f, 1.0f, 0.0f));
-    glm::mat4 mvp = proj * view * model;
+    glm::mat4 mvp = proj * cam.GetViewMatrix() * model;
 
     
     drawCube(mvp);
@@ -113,7 +123,7 @@ void VectorScene::Render()
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, p);
         model = glm::scale(model,glm::vec3(0.1f));
-        glm::mat4 mvp = proj * view * model;
+        glm::mat4 mvp = proj * cam.GetViewMatrix() * model;
         glColor3f(1.0f, 0.0f, 0);
         drawSphere(1.0f, 12, 24, mvp);
         glColor3f(1.0f, 1.0f, 1.0f);
@@ -184,60 +194,7 @@ void VectorScene::drawCube(const glm::mat4& transform) {
 
 
 
-void VectorScene::HandleMouse(double xpos, double ypos)
-{
-    float xoffset;
-    float yoffset;
-    extern bool locked;
-   
-    //look right yaw increases 
-    // look up pitch increases 
 
-      // If this is the first time we're getting mouse input,
-// just record the current position to avoid a big jump
-    if (firstMouse) {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
-
-    // Calculate how much the mouse moved this frame (offset)
-    if (locked) {//free to move // press tab to get your curser
-        // Horizontal movement (left/right)
-        xoffset = (xpos - lastX) * 0.1f;
-        // Vertical movement (up/down), reversed because screen Y goes down as mouse goes up
-        yoffset = (lastY - ypos) * 0.1f;
-    }
-    else {
-        // If camera is locked, don't move
-        xoffset = 0.0f;
-        yoffset = 0.0f;
-    }
-
-    // Save the current mouse position for the next frame
-    lastX = xpos;
-    lastY = ypos;
-
-    // Update the yaw (left/right) and pitch (up/down) based on mouse movement
-    yaw += xoffset;
-    pitch += yoffset;
-
-    // Limit how far we can look up or down (to prevent flipping over)
-    if (pitch > 89.0f) pitch = 89.0f;
-    if (pitch < -89.0f) pitch = -89.0f;
-
-    // Calculate the new direction the camera should face based on yaw and pitch
-    glm::vec3 direction;
-    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch)); // forward/back
-    direction.y = sin(glm::radians(pitch)); // up/down
-    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch)); // left/right
-
-    // Make sure the direction vector is length 1
-    cameraFront = glm::normalize(direction);
-
-    
-
-}
 
 void VectorScene::drawSphere( float radius, int stacks = 12, int slices = 24, const glm::mat4& transform ) {
 
