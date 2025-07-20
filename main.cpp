@@ -8,6 +8,7 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+#include <chrono>
 
 int scene = 1;
 Scene* currentScene;
@@ -71,9 +72,15 @@ int main() {
     currentSceneMod = new modelScene();
     currentScene = currentSceneVec; // Both point to same instance 
 
-   
+    auto lastTime = std::chrono::high_resolution_clock::now();
  
     while (!glfwWindowShouldClose(window)) {
+
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> elapsedTime = currentTime - lastTime;
+        double deltaTime = elapsedTime.count();
+        lastTime = currentTime;
+
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
       
@@ -89,7 +96,7 @@ int main() {
         ImGui::NewFrame();
 
         currentScene->HandleEvents(window);
-        currentScene->Update();
+        currentScene->Update(deltaTime);
         currentScene->Render();
 
        

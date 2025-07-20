@@ -14,8 +14,9 @@ modelScene::~modelScene()
 {
 }
 
-void modelScene::Update()
+void modelScene::Update(double deltaTime)
 {
+
 }
 
 void modelScene::HandleEvents(GLFWwindow* window)
@@ -24,7 +25,6 @@ void modelScene::HandleEvents(GLFWwindow* window)
     double xpos, ypos;
     glfwGetCursorPos(window, &xpos, &ypos);
     cam.HandleMouse(xpos, ypos);
-
 
     bool forward = glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS;
        

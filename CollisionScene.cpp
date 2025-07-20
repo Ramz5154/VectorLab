@@ -8,7 +8,7 @@ CollisionScene::~CollisionScene()
 {
 }
 
-void CollisionScene::Update()
+void CollisionScene::Update(double deltaTime)
 {
 }
 

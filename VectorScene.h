@@ -17,28 +17,23 @@ class VectorScene : public Scene
 			  0.0f };
 	
 public:
-
-	glm::vec3 center = { 2, 2, 2 };
+	
+	glm::vec3 center;
 	float radius = 0.4f;
 		
 	Ray cameraRay;    // build ray
 
-	
 	bool fired = false;
 	float cameraSpeed = 0.1f;
 	std::vector<glm::vec3> hitPoints;
 	
-	 // direction you're looking
 
-
-
-	
 
 	void drawSphere( float radius, int stacks, int slices, const glm::mat4& transform = glm::mat4(1.0f));
 
 	VectorScene();
 	~VectorScene();
-	void Update() override;
+	void Update(double deltaTime) override;
 	void HandleEvents(GLFWwindow* window) override;
 	void Render() override;
 

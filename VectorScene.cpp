@@ -46,14 +46,12 @@ VectorScene::~VectorScene()
 {
 }
 
-void VectorScene::Update()
+void VectorScene::Update(double deltaTime)
 {
-
-                       // pitch
-
+   
     Ray ray(cam.Position, cam.cameraFront); // origin & direction
  
-    float radius = 1.0f;
+    float radius = 0.3f;
     float hitT;
 
     if (intersectRaySphere(ray, center, radius, hitT)) {
