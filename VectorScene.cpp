@@ -6,8 +6,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
-
+#include "Sphere.h"
 #include "Ray.h" 
+#include "collision.h"
 #include <cmath>
 
 using namespace glm;
@@ -48,7 +49,8 @@ VectorScene::~VectorScene()
 
 void VectorScene::Update(double deltaTime)
 {
-   
+    
+
     Ray ray(cam.Position, cam.cameraFront); // origin & direction
  
     float radius = 0.3f;
@@ -56,10 +58,10 @@ void VectorScene::Update(double deltaTime)
 
     if (intersectRaySphere(ray, center, radius, hitT)) {
         glm::vec3 hitPoint = ray.at(hitT);
-        std::cout << "Hit at: (" << hitPoint.x << ", " << hitPoint.y << ", " << hitPoint.z << ")\n";
+       // std::cout << "Hit at: (" << hitPoint.x << ", " << hitPoint.y << ", " << hitPoint.z << ")\n";
     }
     else {
-        std::cout << "No hit\n";
+        //std::cout << "No hit\n";
     }
 }
 
@@ -130,7 +132,7 @@ void VectorScene::Render()
     if (hitPoints.size() > 4)
         hitPoints.erase(hitPoints.begin() + 0);
               
-
+    
 }
 
 
@@ -208,8 +210,6 @@ void VectorScene::drawSphere( float radius, int stacks = 12, int slices = 24, co
         float zr1 = cos(lat1);
 
       
-      
-
         glBegin(GL_LINE_LOOP);
         for (int j = 0; j <= slices; ++j) {
             float lng = 2 * glm::pi<float>() * float(j) / slices;

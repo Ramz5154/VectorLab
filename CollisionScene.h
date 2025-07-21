@@ -1,9 +1,13 @@
 #pragma once
 #include "Scene.h"
-
+#include "VectorScene.h"
+#include "Sphere.h"
 
 class CollisionScene : public Scene
 {
+	VectorScene* vecScene;
+	Sphere* s1;
+	Sphere* s2;
 public:
 	CollisionScene();
 	~CollisionScene();

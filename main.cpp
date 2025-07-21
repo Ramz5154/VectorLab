@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "VectorScene.h"
 #include "modelScene.h"
+#include "CollisionScene.h"
 #include "camera.h"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -31,12 +32,15 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
         scene = 2;
     }
+    if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
+        scene = 3;
+    }
 
 }
 
 VectorScene* currentSceneVec = nullptr;
 modelScene* currentSceneMod = nullptr;
-
+CollisionScene* currentSceneCol = nullptr;
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
     cam->HandleMouse(xpos, ypos);
@@ -70,6 +74,7 @@ int main() {
     cam = new camera(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
     currentSceneVec = new VectorScene();
     currentSceneMod = new modelScene();
+    currentSceneCol = new CollisionScene();
     currentScene = currentSceneVec; // Both point to same instance 
 
     auto lastTime = std::chrono::high_resolution_clock::now();
@@ -120,11 +125,15 @@ int main() {
 
         switch (scene) {
         case 1:
-           currentScene = currentSceneVec;
-        
+            currentScene = currentSceneVec;
+
             break;
         case 2:
             currentScene = currentSceneMod;
+            break;
+
+        case 3:
+            currentScene = currentSceneCol;
             break;
         }
     }

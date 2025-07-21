@@ -53,6 +53,7 @@
     <ClInclude Include="modelScene.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="Sphere.h" />
     <ClInclude Include="Vec3.h" />
     <ClInclude Include="VectorScene.h" />
   </ItemGroup>
