@@ -11,7 +11,7 @@
 #include "imgui_impl_opengl3.h"
 #include <chrono>
 
-int scene = 1;
+int scene = 3;
 Scene* currentScene;
 camera* cam;
 
@@ -75,7 +75,7 @@ int main() {
     currentSceneVec = new VectorScene();
     currentSceneMod = new modelScene();
     currentSceneCol = new CollisionScene();
-    currentScene = currentSceneVec; // Both point to same instance 
+    currentScene = currentSceneCol; // Both point to same instance 
 
     auto lastTime = std::chrono::high_resolution_clock::now();
  

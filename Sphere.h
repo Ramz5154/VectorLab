@@ -1,11 +1,13 @@
 #pragma once
 #include <glm/glm.hpp>
+#include "transform.h"
 using namespace glm;
 struct Sphere {
-	float radius;
-	vec3 center;
+	
+	transform trans;
 
-	Sphere(float r, vec3 center) : radius(r), center(center) {}
-	Sphere() : radius(1.0f), center(0.0f,0.0f,0.0f) {}
+	Sphere(transform trans) : trans(trans) {}
 	~Sphere() {}
+
+
 };

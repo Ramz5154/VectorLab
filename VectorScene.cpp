@@ -10,6 +10,7 @@
 #include "Ray.h" 
 #include "collision.h"
 #include <cmath>
+#include "CollisionScene.h"
 
 using namespace glm;
 
@@ -50,7 +51,7 @@ VectorScene::~VectorScene()
 void VectorScene::Update(double deltaTime)
 {
     
-
+   
     Ray ray(cam.Position, cam.cameraFront); // origin & direction
  
     float radius = 0.3f;
@@ -125,7 +126,7 @@ void VectorScene::Render()
         model = glm::scale(model,glm::vec3(0.1f));
         glm::mat4 mvp = proj * cam.GetViewMatrix() * model;
         glColor3f(1.0f, 0.0f, 0);
-        drawSphere(1.0f, 12, 24, mvp);
+        drawSphere(4.0f, 12, 24, mvp);
         glColor3f(1.0f, 1.0f, 1.0f);
     }
 
