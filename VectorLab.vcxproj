@@ -51,10 +51,11 @@
     <ClInclude Include="imstb_truetype.h" />
     <ClInclude Include="Mat4.h" />
     <ClInclude Include="modelScene.h" />
+    <ClInclude Include="Object.h" />
+    <ClInclude Include="physics.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Sphere.h" />
-    <ClInclude Include="transform.h" />
     <ClInclude Include="Vec3.h" />
     <ClInclude Include="VectorScene.h" />
   </ItemGroup>

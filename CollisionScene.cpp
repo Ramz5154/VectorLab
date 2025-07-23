@@ -3,12 +3,14 @@
 #include "collision.h"
 #include "VectorScene.h"
 #include "modelScene.h"
-#include "transform.h"
+
 using namespace glm;
 
 CollisionScene::CollisionScene()
 {
     vecScene = new VectorScene;
+    s1 = new Sphere(vec3(1.5f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(0.5f));
+    s2 = new Sphere(vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.5f));
 }
 
 CollisionScene::~CollisionScene()
@@ -17,29 +19,41 @@ CollisionScene::~CollisionScene()
 
 void CollisionScene::Update(double deltaTime)
 {
-    transform trans;
-    s1 = new Sphere(trans);
-    s2 = new Sphere(trans);
    
-    s1->trans.getMatrix();
-    if (collision::collisionDetection(*s1, *s2)) {
-        printf("detected");
+    s1->getMatrix();
+    if (collision::SphereSphereCollisionDetection(*s1, *s2)) {
+        printf("detected");  
+        
     }
+  collision::SphereSphereCollisionAction(*s1, *s2);
 }
 
 void CollisionScene::Render()
 {
-   drawSphere(s1->trans.Scale, 12, 24, s1->trans.getMatrix());
-   drawSphere(s2->trans.Scale, 12, 24, s2->trans.getMatrix());
+   drawSphere(s1->Scale, 12, 24, s1->getMatrix());
+   drawSphere(s2->Scale, 12, 24, s2->getMatrix());
  
 }
 
 void CollisionScene::HandleEvents(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        s1->trans.Position.x += 1.1f;
-        s1->trans.Scale.x += 1.0f;
+        s1->Position.x += 0.01f;
+       
     }
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        s1->Position.x -= 0.01f;
+      
+    }
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        s1->Position.y += 0.01f;
+
+    }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        s1->Position.y -= 0.01f;
+
+    }
+  
 }
 
 void CollisionScene::drawSphere(vec3 radius, int stacks = 12, int slices = 24, const mat4& transform = mat4(1.0f)) {

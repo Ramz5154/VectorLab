@@ -4,13 +4,22 @@
 using namespace glm;
 
 
-bool collision::collisionDetection(const Sphere& object1, const Sphere& object2)
+bool collision::SphereSphereCollisionDetection(const Sphere& object1, const Sphere& object2)
 {
-	float distance = glm::length(object1.trans.Position - object2.trans.Position);
-	float radius1 = std::max({ object1.trans.Scale.x, object1.trans.Scale.y, object1.trans.Scale.z });
-	float radius2 = std::max({ object2.trans.Scale.x, object2.trans.Scale.y, object2.trans.Scale.z });
+	float distance = glm::length(object1.Position - object2.Position);
+	float radius1 = std::max({ object1.Scale.x, object1.Scale.y, object1.Scale.z });
+	float radius2 = std::max({ object2.Scale.x, object2.Scale.y, object2.Scale.z });
 	if (distance <= radius1 + radius2) {
 		return true;
 	} 
 	return false;
-} 
+}
+void collision::SphereSphereCollisionAction(Sphere& object1, Sphere& Object2)
+{
+	if(SphereSphereCollisionDetection(object1,Object2))
+		Object2.Position += object1.Scale;
+	
+}
+
+
+
