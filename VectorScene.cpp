@@ -6,7 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
-#include "Sphere.h"
+#include "objects.h"
 #include "Ray.h" 
 #include "collision.h"
 #include <cmath>

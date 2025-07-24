@@ -55,7 +55,7 @@
     <ClInclude Include="physics.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Scene.h" />
-    <ClInclude Include="Sphere.h" />
+    <ClInclude Include="objects.h" />
     <ClInclude Include="Vec3.h" />
     <ClInclude Include="VectorScene.h" />
   </ItemGroup>

@@ -1,7 +1,7 @@
 #pragma once
 #include "Scene.h"
 #include "VectorScene.h"
-#include "Sphere.h"
+#include "objects.h"
 #include <vector>
 
 class CollisionScene : public Scene
@@ -11,10 +11,12 @@ class CollisionScene : public Scene
 			  -90.0f,                       // yaw
 			  0.0f };
 
-
+	
 	VectorScene* vecScene;
 	Sphere* s1;
 	Sphere* s2;
+	Cube* c1;
+	Cube* c2;
 	mat4 mvp;
 	
 public:
@@ -27,5 +29,7 @@ public:
 
 	void drawSphere(vec3 radius, int stacks, int slices, const glm::mat4& transform);
 	std::vector<Sphere*> spheres;
+	std::vector<Cube*> Cubes;
+	
 };
 

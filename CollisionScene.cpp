@@ -1,5 +1,5 @@
 #include "CollisionScene.h"
-#include "Sphere.h"
+#include "objects.h"
 #include "collision.h"
 #include "VectorScene.h"
 #include "modelScene.h"
@@ -10,9 +10,13 @@ using namespace glm;
 CollisionScene::CollisionScene()
 {
     vecScene = new VectorScene;
-
+   
     spheres.push_back(s1 = new Sphere(vec3(1.5f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(2.5f)));
     spheres.push_back(s2 = new Sphere(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(2.5f)));
+
+    Cubes.push_back(c1 = new Cube(vec3(1.5f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(2.5f)));
+    Cubes.push_back(c2 = new Cube(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(2.5f,2.5f,2.5f)));
+   
 }
 
 CollisionScene::~CollisionScene()
@@ -32,7 +36,10 @@ void CollisionScene::Update(double deltaTime)
         drawSphere(s1->Scale, 12, 24, mvp);
         drawSphere(s2->Scale, 12, 24, mvp);
    }
-    
+    // if object i is a sphere add it to the sphere vector if cube, cube vector 
+    // make a cubeSphere detection that takes both vectors 
+   
+    //TODO: multiple detections 
     for (int i = 0; i < spheres.size(); i++) {
         for (int j = i+1; j < spheres.size(); j++) {
 

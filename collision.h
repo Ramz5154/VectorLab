@@ -1,5 +1,5 @@
 #pragma once
-#include "Sphere.h"
+#include "objects.h"
 
 class collision
 {
