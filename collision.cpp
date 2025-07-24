@@ -14,10 +14,10 @@ bool collision::SphereSphereCollisionDetection(const Sphere& object1, const Sphe
 	} 
 	return false;
 }
-void collision::SphereSphereCollisionAction(Sphere& object1, Sphere& Object2)
+void collision::SphereSphereCollisionAction(Sphere& object1, Sphere& Object2, float delta)
 {
-	if(SphereSphereCollisionDetection(object1,Object2))
-		Object2.Position += object1.Scale;
+
+		Object2.Position += object1.Scale * delta;
 	
 }
 

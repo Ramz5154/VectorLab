@@ -8,6 +8,7 @@ struct Sphere {
 	vec3 Position;
 	vec3 Rotation;
 	vec3 Scale;
+	float gravity = -0.8f;
 
 	mat4 getMatrix() {
 		mat4 t = translate(mat4(1.0f), Position);

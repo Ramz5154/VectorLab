@@ -3,14 +3,16 @@
 #include "collision.h"
 #include "VectorScene.h"
 #include "modelScene.h"
+#include "camera.h"
 
 using namespace glm;
 
 CollisionScene::CollisionScene()
 {
     vecScene = new VectorScene;
-    s1 = new Sphere(vec3(1.5f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(0.5f));
-    s2 = new Sphere(vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.5f));
+
+    spheres.push_back(s1 = new Sphere(vec3(1.5f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(2.5f)));
+    spheres.push_back(s2 = new Sphere(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(2.5f)));
 }
 
 CollisionScene::~CollisionScene()
@@ -20,37 +22,70 @@ CollisionScene::~CollisionScene()
 void CollisionScene::Update(double deltaTime)
 {
    
-    s1->getMatrix();
-    if (collision::SphereSphereCollisionDetection(*s1, *s2)) {
-        printf("detected");  
-        
+    for (auto obj : spheres) {
+        obj->Position.y += obj->gravity * deltaTime;
+        glm::mat4 proj = glm::perspective(glm::radians(90.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+
+
+        glm::mat4 model = obj->getMatrix();
+        mvp = proj * cam.GetViewMatrix() * model;
+        drawSphere(s1->Scale, 12, 24, mvp);
+        drawSphere(s2->Scale, 12, 24, mvp);
+   }
+    
+    for (int i = 0; i < spheres.size(); i++) {
+        for (int j = i+1; j < spheres.size(); j++) {
+
+            if (collision::SphereSphereCollisionDetection(*spheres[i], *spheres[j])) {
+                printf("detected");
+
+                collision::SphereSphereCollisionAction(*spheres[i], *spheres[j], deltaTime);
+            }
+        }
     }
-  collision::SphereSphereCollisionAction(*s1, *s2);
 }
 
 void CollisionScene::Render()
 {
-   drawSphere(s1->Scale, 12, 24, s1->getMatrix());
-   drawSphere(s2->Scale, 12, 24, s2->getMatrix());
- 
+   
 }
 
 void CollisionScene::HandleEvents(GLFWwindow* window)
 {
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+
+    double xpos, ypos;
+    glfwGetCursorPos(window, &xpos, &ypos);
+    cam.HandleMouse(xpos, ypos);
+
+    bool forward = glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS;
+
+    bool back = glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS;
+
+    bool left = glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS;
+
+    //which makes our thumb point right but we subtarct to get left;
+    bool right = glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS;
+
+    cam.camInput(forward, back, left, right);
+
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
         s1->Position.x += 0.01f;
        
     }
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
         s1->Position.x -= 0.01f;
       
     }
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
         s1->Position.y += 0.01f;
 
     }
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
         s1->Position.y -= 0.01f;
+
+    }
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+        s1->Position.z += 0.01f;
 
     }
   
