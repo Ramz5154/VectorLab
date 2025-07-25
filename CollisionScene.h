@@ -15,6 +15,7 @@ class CollisionScene : public Scene
 	VectorScene* vecScene;
 	Sphere* s1;
 	Sphere* s2;
+	Sphere* s3;
 	Cube* c1;
 	Cube* c2;
 	mat4 mvp;

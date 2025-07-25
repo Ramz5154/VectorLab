@@ -21,5 +21,23 @@ void collision::SphereSphereCollisionAction(Sphere& object1, Sphere& Object2, fl
 	
 }
 
+void collision::AABBAABBCollisionAction(Cube& object1, Cube& Object2, float delta)
+{
+}
+
+bool collision::AABBAABBCollisionDetection( const Cube& object1, const Cube& object2)
+{
+	vec3 max1 = object1.getMax();
+	vec3 min1 = object1.getMin();
+	vec3 max2 = object2.getMax();
+	vec3 min2 = object2.getMin();
+
+	 if( max1.x > min2.x&& min1.x < max2.x &&
+	 max1.y > min2.y&& min1.y < max2.y &&
+	 max1.z > min2.z&& min1.z < max2.z)
+		return true;
+	return false;
+}
+
 
 

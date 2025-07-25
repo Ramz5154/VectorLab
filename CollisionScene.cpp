@@ -11,11 +11,12 @@ CollisionScene::CollisionScene()
 {
     vecScene = new VectorScene;
    
-    spheres.push_back(s1 = new Sphere(vec3(1.5f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(2.5f)));
-    spheres.push_back(s2 = new Sphere(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(2.5f)));
+    spheres.push_back(s1 = new Sphere(vec3(1.5f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.5f)));
+    spheres.push_back(s2 = new Sphere(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.5f)));
+    spheres.push_back(s3 = new Sphere(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.5f)));
 
-    Cubes.push_back(c1 = new Cube(vec3(1.5f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(2.5f)));
-    Cubes.push_back(c2 = new Cube(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(2.5f,2.5f,2.5f)));
+    Cubes.push_back(c1 = new Cube(vec3(3.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(2.5f)));
+    Cubes.push_back(c2 = new Cube(vec3(2.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(2.5f,5.5f,2.5f)));
    
 }
 
@@ -25,17 +26,36 @@ CollisionScene::~CollisionScene()
 
 void CollisionScene::Update(double deltaTime)
 {
-   
-    for (auto obj : spheres) {
-        obj->Position.y += obj->gravity * deltaTime;
+    for (auto obj : Cubes) {
+        //obj->Position.y += obj->gravity * deltaTime;  //////////GRAVITY
         glm::mat4 proj = glm::perspective(glm::radians(90.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
 
         glm::mat4 model = obj->getMatrix();
         mvp = proj * cam.GetViewMatrix() * model;
-        drawSphere(s1->Scale, 12, 24, mvp);
-        drawSphere(s2->Scale, 12, 24, mvp);
-   }
+        vecScene->drawCube(mvp);
+    }
+
+    for (int i = 0; i < Cubes.size(); i++) {
+        for (int j = i + 1; j < Cubes.size(); j++) {
+
+            if (collision::AABBAABBCollisionDetection(*Cubes[i], *Cubes[j])) {
+                printf("detected");
+
+                
+            }
+        }
+    }
+
+   // for (auto obj : spheres) {
+   //     //obj->Position.y += obj->gravity * deltaTime;
+   //     glm::mat4 proj = glm::perspective(glm::radians(90.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+
+
+   //     glm::mat4 model = obj->getMatrix();
+   //     mvp = proj * cam.GetViewMatrix() * model;
+   //     drawSphere(obj->Scale, 12, 24, mvp);
+   //}
     // if object i is a sphere add it to the sphere vector if cube, cube vector 
     // make a cubeSphere detection that takes both vectors 
    
@@ -76,23 +96,23 @@ void CollisionScene::HandleEvents(GLFWwindow* window)
     cam.camInput(forward, back, left, right);
 
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-        s1->Position.x += 0.01f;
+        c1->Position.x += 0.01f;
        
     }
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-        s1->Position.x -= 0.01f;
+        c1->Position.x -= 0.01f;
       
     }
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-        s1->Position.y += 0.01f;
+        c1->Position.y += 0.01f;
 
     }
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-        s1->Position.y -= 0.01f;
+        c1->Position.y -= 0.01f;
 
     }
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-        s1->Position.z += 0.01f;
+        c1->Position.z += 0.01f;
 
     }
   
