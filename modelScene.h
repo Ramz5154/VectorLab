@@ -40,7 +40,7 @@ public:
 
 	modelScene();
 	~modelScene();
-	void Update(double deltaTime) override;
+	void Update(float deltaTime) override;
 	void HandleEvents(GLFWwindow* window) override;
 	void Render() override;
 	

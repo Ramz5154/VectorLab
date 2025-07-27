@@ -9,7 +9,9 @@ struct Cube {
 	vec3 Position;
 	vec3 Rotation;
 	vec3 Scale;
-	float gravity = -0.8f;
+	
+
+	vec3 velocity = vec3(0.0f);
 
 	vec3 getMin() const {
 		return Position - Scale * 0.5f;
@@ -35,7 +37,7 @@ struct Sphere {
 	vec3 Position;
 	vec3 Rotation;
 	vec3 Scale;
-	float gravity = -0.8f;
+	
 
 	mat4 getMatrix() {
 		mat4 t = translate(mat4(1.0f), Position);

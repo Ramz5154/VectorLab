@@ -15,8 +15,8 @@ CollisionScene::CollisionScene()
     spheres.push_back(s2 = new Sphere(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.5f)));
     spheres.push_back(s3 = new Sphere(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.5f)));
 
-    Cubes.push_back(c1 = new Cube(vec3(3.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(2.5f)));
-    Cubes.push_back(c2 = new Cube(vec3(2.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(2.5f,5.5f,2.5f)));
+    Cubes.push_back(c1 = new Cube(vec3(3.0f, 9.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(2.5f)));
+    Cubes.push_back(c2 = new Cube(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(10.5f,10.5f,10.5f)));
    
 }
 
@@ -24,10 +24,11 @@ CollisionScene::~CollisionScene()
 {
 }
 
-void CollisionScene::Update(double deltaTime)
+void CollisionScene::Update(float deltaTime)
 {
     for (auto obj : Cubes) {
-        //obj->Position.y += obj->gravity * deltaTime;  //////////GRAVITY
+        c1->velocity.y += -9.8f * deltaTime;
+        c1->Position += obj->velocity * deltaTime; 
         glm::mat4 proj = glm::perspective(glm::radians(90.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
 
@@ -41,21 +42,21 @@ void CollisionScene::Update(double deltaTime)
 
             if (collision::AABBAABBCollisionDetection(*Cubes[i], *Cubes[j])) {
                 printf("detected");
-
+                collision::AABBAABBCollisionAction(Cubes, deltaTime);
                 
             }
         }
     }
 
-   // for (auto obj : spheres) {
-   //     //obj->Position.y += obj->gravity * deltaTime;
-   //     glm::mat4 proj = glm::perspective(glm::radians(90.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+   /* for (auto obj : spheres) {
+        obj->Position.y += -9.8f * deltaTime;
+        glm::mat4 proj = glm::perspective(glm::radians(90.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
 
-   //     glm::mat4 model = obj->getMatrix();
-   //     mvp = proj * cam.GetViewMatrix() * model;
-   //     drawSphere(obj->Scale, 12, 24, mvp);
-   //}
+        glm::mat4 model = obj->getMatrix();
+        mvp = proj * cam.GetViewMatrix() * model;
+        drawSphere(obj->Scale, 12, 24, mvp);
+   }*/
     // if object i is a sphere add it to the sphere vector if cube, cube vector 
     // make a cubeSphere detection that takes both vectors 
    

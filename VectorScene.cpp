@@ -48,7 +48,7 @@ VectorScene::~VectorScene()
 {
 }
 
-void VectorScene::Update(double deltaTime)
+void VectorScene::Update(float deltaTime)
 {
     
    

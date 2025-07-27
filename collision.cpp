@@ -1,6 +1,6 @@
 #include "collision.h"
 #include <algorithm>
-
+#include <vector>
 using namespace glm;
 
 
@@ -21,8 +21,30 @@ void collision::SphereSphereCollisionAction(Sphere& object1, Sphere& Object2, fl
 	
 }
 
-void collision::AABBAABBCollisionAction(Cube& object1, Cube& Object2, float delta)
+void collision::AABBAABBCollisionAction(std::vector<Cube*>& cubes, float delta)
 {
+
+	for (int i = 0; i < cubes.size(); i++) {
+		for (int j = i + 1; j < cubes.size(); j++) {
+			float overlapX = std::min(cubes[i]->getMax().x, cubes[j]->getMax().x) - std::max(cubes[i]->getMin().x, cubes[j]->getMin().x);
+			float overlapY = std::min(cubes[i]->getMax().y, cubes[j]->getMax().y) - std::max(cubes[i]->getMin().y, cubes[j]->getMin().y);
+			float overlapZ = std::min(cubes[i]->getMax().z, cubes[j]->getMax().z) - std::max(cubes[i]->getMin().z, cubes[j]->getMin().z);
+			if (overlapX < overlapY && overlapX < overlapZ) {
+				
+				cubes[i]->Position.x += (cubes[i]->Position.x < cubes[j]->Position.x ? -overlapX : overlapX);
+			}
+			else if (overlapY < overlapZ) {
+				
+				cubes[i]->Position.y += (cubes[i]->Position.y < cubes[j]->Position.y ? -overlapY : overlapY);
+				cubes[i]->velocity.y = 0.0f; 
+			}
+			else {
+				
+				cubes[i]->Position.z += (cubes[i]->Position.z < cubes[j]->Position.z ? -overlapZ : overlapZ);
+			}
+
+		}
+	}
 }
 
 bool collision::AABBAABBCollisionDetection( const Cube& object1, const Cube& object2)

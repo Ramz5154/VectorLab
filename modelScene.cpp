@@ -15,7 +15,7 @@ modelScene::~modelScene()
 {
 }
 
-void modelScene::Update(double deltaTime)
+void modelScene::Update(float deltaTime)
 {
 
 }

@@ -83,7 +83,7 @@ int main() {
 
         auto currentTime = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> elapsedTime = currentTime - lastTime;
-        double deltaTime = elapsedTime.count();
+        float deltaTime = elapsedTime.count();
         lastTime = currentTime;
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);

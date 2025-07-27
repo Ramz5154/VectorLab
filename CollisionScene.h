@@ -24,7 +24,7 @@ public:
 	CollisionScene();
 	~CollisionScene();
 
-	void Update(double deltaTime) override;
+	void Update(float deltaTime) override;
 	void Render() override;
 	void HandleEvents(GLFWwindow* window) override;
 
