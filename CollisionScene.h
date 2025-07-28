@@ -18,7 +18,9 @@ class CollisionScene : public Scene
 	Sphere* s3;
 	Cube* c1;
 	Cube* c2;
+	Cube* c3;
 	mat4 mvp;
+
 	
 public:
 	CollisionScene();
@@ -31,6 +33,7 @@ public:
 	void drawSphere(vec3 radius, int stacks, int slices, const glm::mat4& transform);
 	std::vector<Sphere*> spheres;
 	std::vector<Cube*> Cubes;
+	std::vector<Cube*> Ground;
 	
 };
 

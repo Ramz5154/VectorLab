@@ -21,43 +21,48 @@ void collision::SphereSphereCollisionAction(Sphere& object1, Sphere& Object2, fl
 	
 }
 
-void collision::AABBAABBCollisionAction(std::vector<Cube*>& cubes, float delta)
+void collision::AABBAABBCollisionAction(std::vector<Cube*>& cubes, std::vector<Cube*>& floor,float delta)
 {
 
 	for (int i = 0; i < cubes.size(); i++) {
-		for (int j = i + 1; j < cubes.size(); j++) {
-			float overlapX = std::min(cubes[i]->getMax().x, cubes[j]->getMax().x) - std::max(cubes[i]->getMin().x, cubes[j]->getMin().x);
-			float overlapY = std::min(cubes[i]->getMax().y, cubes[j]->getMax().y) - std::max(cubes[i]->getMin().y, cubes[j]->getMin().y);
-			float overlapZ = std::min(cubes[i]->getMax().z, cubes[j]->getMax().z) - std::max(cubes[i]->getMin().z, cubes[j]->getMin().z);
+		for (int j = 0; j < floor.size(); j++) {
+			float overlapX = std::min(cubes[i]->getMax().x, floor[j]->getMax().x) - std::max(cubes[i]->getMin().x, floor[j]->getMin().x);
+			float overlapY = std::min(cubes[i]->getMax().y, floor[j]->getMax().y) - std::max(cubes[i]->getMin().y, floor[j]->getMin().y);
+			float overlapZ = std::min(cubes[i]->getMax().z, floor[j]->getMax().z) - std::max(cubes[i]->getMin().z, floor[j]->getMin().z);
 			if (overlapX < overlapY && overlapX < overlapZ) {
-				
-				cubes[i]->Position.x += (cubes[i]->Position.x < cubes[j]->Position.x ? -overlapX : overlapX);
+
+				cubes[i]->Position.x += (cubes[i]->Position.x < floor[j]->Position.x ? -overlapX : overlapX);
 			}
 			else if (overlapY < overlapZ) {
-				
-				cubes[i]->Position.y += (cubes[i]->Position.y < cubes[j]->Position.y ? -overlapY : overlapY);
-				cubes[i]->velocity.y = 0.0f; 
+
+				cubes[i]->Position.y += (cubes[i]->Position.y < floor[j]->Position.y ? -overlapY : overlapY);
+				cubes[i]->velocity.y = 0.0f;
 			}
 			else {
-				
-				cubes[i]->Position.z += (cubes[i]->Position.z < cubes[j]->Position.z ? -overlapZ : overlapZ);
+
+				cubes[i]->Position.z += (cubes[i]->Position.z < floor[j]->Position.z ? -overlapZ : overlapZ);
 			}
 
 		}
 	}
 }
 
-bool collision::AABBAABBCollisionDetection( const Cube& object1, const Cube& object2)
+bool collision::AABBAABBCollisionDetection(const std::vector<Cube*>& cubes, const std::vector<Cube*>& floor)
 {
-	vec3 max1 = object1.getMax();
-	vec3 min1 = object1.getMin();
-	vec3 max2 = object2.getMax();
-	vec3 min2 = object2.getMin();
+	for (auto cub : cubes) {
+		for (auto flo : floor) {
+			vec3 max1 = cub->getMax();
+			vec3 min1 = cub->getMin();
+			vec3 max2 = flo->getMax();
+			vec3 min2 = flo->getMin();
 
-	 if( max1.x > min2.x&& min1.x < max2.x &&
-	 max1.y > min2.y&& min1.y < max2.y &&
-	 max1.z > min2.z&& min1.z < max2.z)
-		return true;
+			if (max1.x > min2.x && min1.x < max2.x &&
+				max1.y > min2.y && min1.y < max2.y &&
+				max1.z > min2.z && min1.z < max2.z)
+				return true;
+			
+		}
+	}
 	return false;
 }
 

@@ -10,13 +10,15 @@ using namespace glm;
 CollisionScene::CollisionScene()
 {
     vecScene = new VectorScene;
-   
+  
+
     spheres.push_back(s1 = new Sphere(vec3(1.5f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.5f)));
     spheres.push_back(s2 = new Sphere(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.5f)));
     spheres.push_back(s3 = new Sphere(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.5f)));
 
-    Cubes.push_back(c1 = new Cube(vec3(3.0f, 9.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(2.5f)));
-    Cubes.push_back(c2 = new Cube(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(10.5f,10.5f,10.5f)));
+    Cubes.push_back(c1 = new Cube(vec3(-6.0f, 15.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(2.5f)));
+    Ground.push_back(c2 = new Cube(vec3(0.0f, -6.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(20.5f,5.5f,10.5f)));
+    Cubes.push_back(c3 = new Cube(vec3(7.0f, 45.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(2.5f)));
    
 }
 
@@ -27,26 +29,29 @@ CollisionScene::~CollisionScene()
 void CollisionScene::Update(float deltaTime)
 {
     for (auto obj : Cubes) {
-        c1->velocity.y += -9.8f * deltaTime;
-        c1->Position += obj->velocity * deltaTime; 
-        glm::mat4 proj = glm::perspective(glm::radians(90.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+        obj->velocity.y += -9.8f * deltaTime;
+        obj->Position += obj->velocity * deltaTime;
+        for (auto flo : Ground) {
+            glm::mat4 proj = glm::perspective(glm::radians(90.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
+            glm::mat4 model = obj->getMatrix();
+            glm::mat4 modelFloor = flo->getMatrix();
+            mvp = proj * cam.GetViewMatrix() * model;
+            vecScene->drawCube(mvp);
+            mvp = proj * cam.GetViewMatrix() * modelFloor;
+            vecScene->drawCube(mvp);
 
-        glm::mat4 model = obj->getMatrix();
-        mvp = proj * cam.GetViewMatrix() * model;
-        vecScene->drawCube(mvp);
-    }
-
-    for (int i = 0; i < Cubes.size(); i++) {
-        for (int j = i + 1; j < Cubes.size(); j++) {
-
-            if (collision::AABBAABBCollisionDetection(*Cubes[i], *Cubes[j])) {
-                printf("detected");
-                collision::AABBAABBCollisionAction(Cubes, deltaTime);
-                
-            }
         }
     }
+
+    if (Cubes.size() >= 0 && Ground.size() >= 0){
+        if (collision::AABBAABBCollisionDetection(Cubes, Ground)) {
+            printf("detected");
+            collision::AABBAABBCollisionAction(Cubes, Ground, deltaTime);
+
+        }
+}
+    
 
    /* for (auto obj : spheres) {
         obj->Position.y += -9.8f * deltaTime;
@@ -97,7 +102,7 @@ void CollisionScene::HandleEvents(GLFWwindow* window)
     cam.camInput(forward, back, left, right);
 
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-        c1->Position.x += 0.01f;
+        c1->Position.x += 0.01f * 10;
        
     }
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
