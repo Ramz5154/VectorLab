@@ -11,13 +11,12 @@ CollisionScene::CollisionScene()
 {
     vecScene = new VectorScene;
   
-
     spheres.push_back(s1 = new Sphere(vec3(1.5f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.5f)));
     spheres.push_back(s2 = new Sphere(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.5f)));
     spheres.push_back(s3 = new Sphere(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.5f)));
 
     Cubes.push_back(c1 = new Cube(vec3(-6.0f, 15.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(2.5f)));
-    Ground.push_back(c2 = new Cube(vec3(0.0f, -6.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(20.5f,5.5f,10.5f)));
+    Ground.push_back(c2 = new Cube(vec3(0.0f, -6.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(40.5f,5.5f,30.5f)));
     Cubes.push_back(c3 = new Cube(vec3(7.0f, 45.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(2.5f)));
    
 }
@@ -29,7 +28,7 @@ CollisionScene::~CollisionScene()
 void CollisionScene::Update(float deltaTime)
 {
     for (auto obj : Cubes) {
-        obj->velocity.y += -9.8f * deltaTime;
+        obj->velocity += obj->gravity * deltaTime;
         obj->Position += obj->velocity * deltaTime;
         for (auto flo : Ground) {
             glm::mat4 proj = glm::perspective(glm::radians(90.0f), 800.0f / 600.0f, 0.1f, 100.0f);
@@ -44,13 +43,10 @@ void CollisionScene::Update(float deltaTime)
         }
     }
 
-    if (Cubes.size() >= 0 && Ground.size() >= 0){
-        if (collision::AABBAABBCollisionDetection(Cubes, Ground)) {
-            printf("detected");
-            collision::AABBAABBCollisionAction(Cubes, Ground, deltaTime);
+    if (Cubes.size() >= 0 && Ground.size() >= 0) {
+        collision::AABBAABBCollisionAction(Cubes, Ground, deltaTime);
+    }
 
-        }
-}
     
 
    /* for (auto obj : spheres) {
@@ -70,7 +66,7 @@ void CollisionScene::Update(float deltaTime)
         for (int j = i+1; j < spheres.size(); j++) {
 
             if (collision::SphereSphereCollisionDetection(*spheres[i], *spheres[j])) {
-                printf("detected");
+                //printf("detected");
 
                 collision::SphereSphereCollisionAction(*spheres[i], *spheres[j], deltaTime);
             }
@@ -90,35 +86,58 @@ void CollisionScene::HandleEvents(GLFWwindow* window)
     glfwGetCursorPos(window, &xpos, &ypos);
     cam.HandleMouse(xpos, ypos);
 
-    bool forward = glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS;
+    //bool forward = glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS;
 
-    bool back = glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS;
+    //bool back = glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS;
 
-    bool left = glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS;
+    //bool left = glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS;
 
-    //which makes our thumb point right but we subtarct to get left;
-    bool right = glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS;
+    ////which makes our thumb point right but we subtarct to get left;
+    //bool right = glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS;
 
-    cam.camInput(forward, back, left, right);
+    //cam.camInput(forward, back, left, right);
 
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-        c1->Position.x += 0.01f * 10;
+        c3->Position.x -= 0.01f * speed;
        
     }
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-        c1->Position.x -= 0.01f;
+        c3->Position.x += 0.01f * speed;
       
     }
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-        c1->Position.y += 0.01f;
+        c3->Position.z -= 0.01f * speed;
 
     }
+  
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-        c1->Position.y -= 0.01f;
+        c3->Position.z += 0.01f * speed;
 
     }
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-        c1->Position.z += 0.01f;
+        c3->Position.y += 0.01f * speed;
+
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        c1->Position.x -= 0.01f * speed;
+
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        c1->Position.x += 0.01f * speed;
+
+    }
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        c1->Position.z -= 0.01f * speed;
+
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        c1->Position.z += 0.01f * speed;
+
+    }
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+        c1->Position.y += 0.01f * speed;
 
     }
   

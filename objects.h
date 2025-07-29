@@ -12,7 +12,7 @@ struct Cube {
 	
 
 	vec3 velocity = vec3(0.0f);
-
+	vec3 gravity = vec3(0.0f, -9.8f, 0.0f);
 	vec3 getMin() const {
 		return Position - Scale * 0.5f;
 	}

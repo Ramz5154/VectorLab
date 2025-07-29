@@ -6,10 +6,10 @@
 
 class CollisionScene : public Scene
 {
-	camera cam{ glm::vec3(0.0f, 0.0f, 3.0f),  // position
+	camera cam{ glm::vec3(0.0f, 5.0f, 12.0f),  // position
 			  glm::vec3(0.0f, 1.0f, 0.0f),  // up vector
 			  -90.0f,                       // yaw
-			  0.0f };
+			  -40.0f };
 
 	
 	VectorScene* vecScene;
@@ -20,7 +20,7 @@ class CollisionScene : public Scene
 	Cube* c2;
 	Cube* c3;
 	mat4 mvp;
-
+	float speed = 8.0f;
 	
 public:
 	CollisionScene();
