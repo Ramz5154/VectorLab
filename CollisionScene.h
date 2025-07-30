@@ -21,7 +21,7 @@ class CollisionScene : public Scene
 	Cube* c3;
 	mat4 mvp;
 	float speed = 8.0f;
-	
+	bool grounded;
 public:
 	CollisionScene();
 	~CollisionScene();
