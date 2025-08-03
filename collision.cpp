@@ -3,28 +3,9 @@
 #include <vector>
 using namespace glm;
 
-
-bool collision::SphereSphereCollisionDetection(const Sphere& object1, const Sphere& object2)
-{
-	float distance = glm::length(object1.Position - object2.Position);
-	float radius1 = std::max({ object1.Scale.x, object1.Scale.y, object1.Scale.z });
-	float radius2 = std::max({ object2.Scale.x, object2.Scale.y, object2.Scale.z });
-	if (distance <= radius1 + radius2) {
-		return true;
-	} 
-	return false;
-}
-void collision::SphereSphereCollisionAction(Sphere& object1, Sphere& Object2, float delta)
-{
-
-		Object2.Position += object1.Scale * delta;
-	
-}
-
 void collision::AABBAABBCollisionAction(std::vector<Cube*>& cubes, std::vector<Cube*>& floor,float delta)
 {
-
-
+	////////CUBE / FLOOR
 	for (auto cub : cubes) {
 		for (auto flo : floor) {
 			vec3 max1 = cub->getMax();
@@ -58,7 +39,7 @@ void collision::AABBAABBCollisionAction(std::vector<Cube*>& cubes, std::vector<C
 		}
 }
 	
-	
+	//////// CUBE / CUBE
 	for (int i = 0; i < cubes.size(); i++) {
 		for (int j = i + 1; j < cubes.size(); j++) {
 			vec3 max1 = cubes[i]->getMax();
@@ -105,6 +86,68 @@ void collision::AABBAABBCollisionAction(std::vector<Cube*>& cubes, std::vector<C
 
 }
 
+void collision::SphereAABBCollisionAction(std::vector<Sphere*>& sph, std::vector<Cube*>& flo, std::vector<Cube*>& cub)
+{
+	for (auto floor : flo) {
+		for (auto sphere : sph) {
+			float clampedX = std::max(floor->getMin().x, std::min(sphere->Position.x, floor->getMax().x));
+			float clampedY = std::max(floor->getMin().y, std::min(sphere->Position.y, floor->getMax().y));
+			float clampedZ = std::max(floor->getMin().z, std::min(sphere->Position.z, floor->getMax().z));
+			vec3 closestPoint = vec3(clampedX, clampedY, clampedZ);
+			vec3 diff = sphere->Position - closestPoint;
+			float distanceSquared = glm::dot(diff, diff);
+			float radius = std::max(sphere->Scale.x, std::max(sphere->Scale.y, sphere->Scale.z));
+			if (distanceSquared <= radius * radius) {
+				vec3 colDir = normalize(diff);
+				float penetration = radius - sqrt(distanceSquared);
+				sphere->Position += colDir * penetration;
+				if (colDir.y > 0.5f) {
+					sphere->velocity.y = 0.0f;
+				}
+
+			}
+		}
+	}
 
 
 
+	for (auto cube : cub) {
+		for (auto sphere : sph) {
+			float clampedX = std::max(cube->getMin().x, std::min(sphere->Position.x, cube->getMax().x));
+			float clampedY = std::max(cube->getMin().y, std::min(sphere->Position.y, cube->getMax().y));
+			float clampedZ = std::max(cube->getMin().z, std::min(sphere->Position.z, cube->getMax().z));
+			vec3 closestPoint = vec3(clampedX, clampedY, clampedZ);
+			vec3 diff = sphere->Position - closestPoint;
+			float distanceSquared = glm::dot(diff, diff);
+			float radius = std::max(sphere->Scale.x, std::max(sphere->Scale.y, sphere->Scale.z));
+			if (distanceSquared <= radius * radius) {
+			vec3 colDir = normalize(diff);
+			float penetration = radius - sqrt(distanceSquared);
+			sphere->Position += colDir * penetration * 0.5f;
+			cube->Position -= colDir * penetration * 0.5f;
+			cube->velocity.y = 0.0f;
+
+			}
+
+
+		}
+
+	}
+
+	for (int i = 0; i < sph.size(); i++) {
+		for (int j = i + 1; j < sph.size(); j++) {
+			
+			float distance = glm::length(sph[i]->Position - sph[j]->Position);
+			float radius1 = std::max({ sph[i]->Scale.x, sph[i]->Scale.y, sph[i]->Scale.z });
+			float radius2 = std::max({ sph[j]->Scale.x, sph[j]->Scale.y, sph[j]->Scale.z });
+			if (distance <= radius1 + radius2) {
+				vec3 direction = glm::normalize(sph[i]->Position - sph[j]->Position);
+				float penetration = (radius1 + radius2) - distance;
+
+				
+				sph[i]->Position += direction * (penetration * 0.5f);
+				sph[j]->Position -= direction * (penetration * 0.5f);
+			}
+		}
+	}
+}

@@ -11,9 +11,9 @@ CollisionScene::CollisionScene()
 {
     vecScene = new VectorScene;
   
-    spheres.push_back(s1 = new Sphere(vec3(1.5f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.5f)));
-    spheres.push_back(s2 = new Sphere(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.5f)));
-    spheres.push_back(s3 = new Sphere(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.5f)));
+    spheres.push_back(s1 = new Sphere(vec3(1.5f, 10.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f)));
+    spheres.push_back(s2 = new Sphere(vec3(0.0f, 5.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f)));
+    spheres.push_back(s3 = new Sphere(vec3(0.0f, 10.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f)));
 
     Cubes.push_back(c1 = new Cube(vec3(-6.0f, 15.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(2.5f)));
     Ground.push_back(c2 = new Cube(vec3(0.0f, -6.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(40.5f,5.5f,30.5f)));
@@ -47,32 +47,33 @@ void CollisionScene::Update(float deltaTime)
     if (Cubes.size() >= 0 && Ground.size() >= 0) {
         collision::AABBAABBCollisionAction(Cubes, Ground, deltaTime);
     }
-
+        collision::SphereAABBCollisionAction(spheres, Ground, Cubes);
     
 
-   /* for (auto obj : spheres) {
-        obj->Position.y += -9.8f * deltaTime;
+    for (auto obj : spheres) {
+        obj->velocity += obj->gravity * deltaTime;
+        obj->Position += obj->velocity * deltaTime;
         glm::mat4 proj = glm::perspective(glm::radians(90.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
-
+      
         glm::mat4 model = obj->getMatrix();
         mvp = proj * cam.GetViewMatrix() * model;
         drawSphere(obj->Scale, 12, 24, mvp);
-   }*/
+   }
     // if object i is a sphere add it to the sphere vector if cube, cube vector 
     // make a cubeSphere detection that takes both vectors 
    
     //TODO: multiple detections 
-    for (int i = 0; i < spheres.size(); i++) {
-        for (int j = i+1; j < spheres.size(); j++) {
+    //for (int i = 0; i < spheres.size(); i++) {
+    //    for (int j = i+1; j < spheres.size(); j++) {
 
-            if (collision::SphereSphereCollisionDetection(*spheres[i], *spheres[j])) {
-                //printf("detected");
+    //        if (collision::SphereSphereCollisionDetection(*spheres[i], *spheres[j])) {
+    //            //printf("detected");
 
-                collision::SphereSphereCollisionAction(*spheres[i], *spheres[j], deltaTime);
-            }
-        }
-    }
+    //            collision::SphereSphereCollisionAction(*spheres[i], *spheres[j], deltaTime);
+    //        }
+    //    }
+    //}
 }
 
 void CollisionScene::Render()
@@ -99,20 +100,20 @@ void CollisionScene::HandleEvents(GLFWwindow* window)
     //cam.camInput(forward, back, left, right);
 
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-        c3->Position.x -= 0.01f * speed;
+        s1->Position.x -= 0.01f * speed;
        
     }
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-        c3->Position.x += 0.01f * speed;
+        s1->Position.x += 0.01f * speed;
       
     }
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-        c3->Position.z -= 0.01f * speed;
+        s1->Position.z -= 0.01f * speed;
 
     }
   
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-        c3->Position.z += 0.01f * speed;
+        s1->Position.z += 0.01f * speed;
 
     }
 

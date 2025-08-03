@@ -59,6 +59,10 @@
     <ClInclude Include="Vec3.h" />
     <ClInclude Include="VectorScene.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="fragmentShader.glsl" />
+    <None Include="vertexShader.glsl" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
