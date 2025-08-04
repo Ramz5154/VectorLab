@@ -1,3 +1,4 @@
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 #include "Vec3.h"
@@ -10,6 +11,8 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include <chrono>
+
+#include "Shader.h"
 
 int scene = 3;
 Scene* currentScene;
@@ -58,10 +61,19 @@ int main() {
     }
 
     glfwMakeContextCurrent(window);
+
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        printf("Failed to initialize GLAD\n");
+        return -1;
+    }
+
+
     glfwSetKeyCallback(window, key_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
 
+    Shader shader("vertexShader.glsl", "fragmentShader.glsl");
 
+    
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -74,7 +86,7 @@ int main() {
     cam = new camera(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
     currentSceneVec = new VectorScene();
     currentSceneMod = new modelScene();
-    currentSceneCol = new CollisionScene();
+    currentSceneCol = new CollisionScene(&shader);
     currentScene = currentSceneCol; // Both point to same instance 
 
     auto lastTime = std::chrono::high_resolution_clock::now();

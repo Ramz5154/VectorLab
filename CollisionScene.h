@@ -3,6 +3,7 @@
 #include "VectorScene.h"
 #include "objects.h"
 #include <vector>
+#include "shader.h"
 
 class CollisionScene : public Scene
 {
@@ -11,7 +12,8 @@ class CollisionScene : public Scene
 			  -90.0f,                       // yaw
 			  -40.0f };
 
-	
+	Shader* shader;
+
 	VectorScene* vecScene;
 	Sphere* s1;
 	Sphere* s2;
@@ -23,7 +25,8 @@ class CollisionScene : public Scene
 	float speed = 8.0f;
 	bool grounded;
 public:
-	CollisionScene();
+
+	CollisionScene(Shader* shader);
 	~CollisionScene();
 
 	void Update(float deltaTime) override;

@@ -1,29 +1,34 @@
+#include <glad/glad.h>
 #include "CollisionScene.h"
 #include "objects.h"
 #include "collision.h"
 #include "VectorScene.h"
 #include "modelScene.h"
 #include "camera.h"
+#include "shader.h"
 
 using namespace glm;
 
-CollisionScene::CollisionScene()
+
+CollisionScene::CollisionScene(Shader* shader) : shader(shader)
 {
     vecScene = new VectorScene;
-  
+   
+
     spheres.push_back(s1 = new Sphere(vec3(1.5f, 10.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f)));
     spheres.push_back(s2 = new Sphere(vec3(0.0f, 5.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f)));
     spheres.push_back(s3 = new Sphere(vec3(0.0f, 10.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f)));
 
     Cubes.push_back(c1 = new Cube(vec3(-6.0f, 15.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(2.5f)));
-    Ground.push_back(c2 = new Cube(vec3(0.0f, -6.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(40.5f,5.5f,30.5f)));
+    Ground.push_back(c2 = new Cube(vec3(0.0f, -6.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(40.5f, 5.5f, 30.5f)));
     Cubes.push_back(c3 = new Cube(vec3(7.0f, 45.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(2.5f)));
-   
+
 }
 
 CollisionScene::~CollisionScene()
 {
 }
+
 
 void CollisionScene::Update(float deltaTime)
 {
@@ -58,6 +63,7 @@ void CollisionScene::Update(float deltaTime)
       
         glm::mat4 model = obj->getMatrix();
         mvp = proj * cam.GetViewMatrix() * model;
+       
         drawSphere(obj->Scale, 12, 24, mvp);
    }
     // if object i is a sphere add it to the sphere vector if cube, cube vector 

@@ -1,3 +1,4 @@
+#include <glad/glad.h>
 #include "VectorScene.h"
 #include <GLFW/glfw3.h>
 #include "Vec3.h"
