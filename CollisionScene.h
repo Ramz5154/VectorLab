@@ -33,7 +33,8 @@ public:
 	void Render() override;
 	void HandleEvents(GLFWwindow* window) override;
 
-	void drawSphere(vec3 radius, int stacks, int slices, const glm::mat4& transform);
+	void drawSphere(vec3 radius, int stacks, int slices);
+	void drawCube();
 	std::vector<Sphere*> spheres;
 	std::vector<Cube*> Cubes;
 	std::vector<Cube*> Ground;

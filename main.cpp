@@ -137,10 +137,12 @@ int main() {
 
         switch (scene) {
         case 1:
+            glUseProgram(0);
             currentScene = currentSceneVec;
 
             break;
         case 2:
+            glUseProgram(0);
             currentScene = currentSceneMod;
             break;
 

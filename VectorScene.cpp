@@ -42,6 +42,7 @@ bool intersectRaySphere(const Ray& ray, const glm::vec3& center, float radius, f
 
 VectorScene::VectorScene()
 {
+    
     hitPoints.reserve(5);
 }
 
@@ -51,7 +52,7 @@ VectorScene::~VectorScene()
 
 void VectorScene::Update(float deltaTime)
 {
-    
+   
    
     Ray ray(cam.Position, cam.cameraFront); // origin & direction
  
